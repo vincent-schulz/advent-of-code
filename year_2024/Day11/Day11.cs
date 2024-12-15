@@ -10,10 +10,9 @@ namespace Day11
         public static void Main(string[] args)
         {
             var input = GetInput();
-            var inputCopy = input.ToDictionary(entry => entry.Key, entry => entry.Value);
 
             Console.WriteLine(CountStonesAfterNbBLinks(input, 25));
-            Console.WriteLine(CountStonesAfterNbBLinks(inputCopy, 75));
+            Console.WriteLine(CountStonesAfterNbBLinks(input, 75));
         }
 
         private static Dictionary<long, long> GetInput()
