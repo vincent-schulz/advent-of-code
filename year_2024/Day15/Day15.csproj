@@ -44,7 +44,6 @@
         <Compile Include="Properties\AssemblyInfo.cs"/>
     </ItemGroup>
     <ItemGroup>
-      <Content Include="debug.txt" />
       <Content Include="mapInput.txt" />
       <Content Include="movementsInput.txt" />
     </ItemGroup>

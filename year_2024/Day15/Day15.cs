@@ -167,18 +167,22 @@ namespace Day15
 
 
         // Part 2
-        private static List<int[]> GetPositionsInFront(char[][] map, int[] position, char move)
+        private static List<int[]> GetPositionsInFront(char[][] map, List<int[]> positions, char move)
         {
-            var positionInFront1 = GetPositionInFront(position, move);
-            if (map[positionInFront1[0]][positionInFront1[1]] == '.' || map[positionInFront1[0]][positionInFront1[1]] == '#') return new List<int[]>{ positionInFront1 };
-            var positionInFront2 = map[positionInFront1[0]][positionInFront1[1]] == '['
-                ? new[] { positionInFront1[0], positionInFront1[1] + 1 }
-                : new[] { positionInFront1[0], positionInFront1[1] - 1 };
-            if (map[positionInFront2[0]][positionInFront2[1]] == '.' || map[positionInFront2[0]][positionInFront2[1]] == '#') return new List<int[]>{ positionInFront2 };
-            
-            return new List<int[]>{ positionInFront1, positionInFront2 }
-                .Concat(GetPositionsInFront(map, positionInFront1, move))
-                .Concat(GetPositionsInFront(map, positionInFront2, move)).ToList();
+            var positionsInFront = new List<int[]>();
+            foreach (var position in positions)
+            {
+                var positionInFront1 = GetPositionInFront(position, move);
+                if (map[positionInFront1[0]][positionInFront1[1]] == '#') return new List<int[]> { positionInFront1 };
+                if (map[positionInFront1[0]][positionInFront1[1]] == '.') continue;
+                var positionInFront2 = map[positionInFront1[0]][positionInFront1[1]] == '['
+                    ? new[] { positionInFront1[0], positionInFront1[1] + 1 }
+                    : new[] { positionInFront1[0], positionInFront1[1] - 1 };
+                positionsInFront.Add(positionInFront1);
+                positionsInFront.Add(positionInFront2);
+            }
+            if (positionsInFront.Count == 0) return positionsInFront;
+            return positionsInFront.Concat(GetPositionsInFront(map, positionsInFront, move)).ToList();
         }
 
         private static void NextMoveScaled(char[][] map, char move)
@@ -209,7 +213,7 @@ namespace Day15
             }
             else
             {
-                positionsInFront = GetPositionsInFront(map, _scaledPosition, move);
+                positionsInFront = GetPositionsInFront(map, new List<int[]> { _scaledPosition }, move);
                 if (positionsInFront.Any(pos => map[pos[0]][pos[1]] == '#')) return;
                 positionsInFront = positionsInFront.Where(pos => map[pos[0]][pos[1]] != '.').Distinct(new PositionComparer()).Reverse().ToList();
             }
@@ -224,17 +228,11 @@ namespace Day15
             map[_scaledPosition[0]][_scaledPosition[1]] = '@';
         }
 
-        // 1403878 too high 
         private static int SumOfAllScaledBoxesGpsCoordinatesAfterMoves(char[][] map, char[] moves)
         {
             for (int i = 0; i < moves.Length; i++)
             {
                 NextMoveScaled(map, moves[i]);
-                if (i == 16754 || i == 16755 || i == 16756 || i == 16757)
-                {
-                    PrintMap(map);
-                }
-                
             }
 
             var sumOfGpsCoordinates = 0;
